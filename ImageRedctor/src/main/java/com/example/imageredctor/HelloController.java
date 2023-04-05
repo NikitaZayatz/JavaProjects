@@ -1,19 +1,16 @@
 package com.example.imageredctor;
-
-
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.chart.BarChart;
-import javafx.scene.image.*;
-import javafx.scene.image.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextField;
+import javafx.scene.image.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -21,18 +18,20 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
-
-
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 public class HelloController extends HelloApplication{
     @FXML
     private BarChart<?, ?>barGistogram;
     FileChooser fileChooser;
     @FXML
     private GridPane gp_FirstTab;
-
     @FXML
-    private Canvas canvasDraw;
-
+    private ImageView imgviewForWaves;
     @FXML
     private GridPane gp_SecondTab;
     @FXML
@@ -45,19 +44,57 @@ public class HelloController extends HelloApplication{
     @FXML
     private ImageView iv_loadingImage1;
     public byte [][]array;
+    ThirdWave tw;
     public byte a4Array[][];
     public byte a4ArrayCopy[][];
     public byte a8Array[][];
     public byte extendedArray[][];
+    @FXML
+    private CategoryAxis gistogramLegend;
+    @FXML
+    private TextField countOFwaves;
+    private TextField[] tfWaves;
+    @FXML
+    private GridPane gpWavesradius;
     Image img;
+    int[][]colorArray;
+    double[][] resultOfWaves;
+    final CategoryAxis xAxis = new CategoryAxis();
+    final NumberAxis yAxis = new NumberAxis();
 
-    public HelloController() {
 
+    @FXML
+    void cteateTFforRadius(KeyEvent event) {
+        if(event.getCode() == KeyCode.ENTER)
+        {
+            int size = Integer.parseInt(countOFwaves.getText());
+            gpWavesradius.setPrefWidth(200);
+            gpWavesradius.setPrefHeight(100);
+            gpWavesradius.setGridLinesVisible(true);
+            tfWaves = new TextField[size];
+            for(int i = 0; i < size;i++){
+                tfWaves[i] = new TextField();
+                if(i == 0){
+                    tfWaves[i].setText("0.6");
+                } else if (i == 1) {
+                    tfWaves[i].setText("0.3");
+                } else if (i== 2) {
+                    tfWaves[i].setText("0.1");
+                }
+                tfWaves[i].setPrefHeight(25);
+                tfWaves[i].setPrefWidth(80);
+                tfWaves[i].setAlignment(Pos.CENTER);
+                tfWaves[i].setEditable(true);
+                gpWavesradius.setColumnIndex(tfWaves[i], i);
+                gpWavesradius.getChildren().add(tfWaves[i]);
+
+            }
+        }
     }
     @FXML
     void initialize() {
-       // GraphicsContext gc = canvasDraw.getGraphicsContext2D();
-       // drawLines(gc);
+       gistogramLegend.setAnimated(true);
+       gistogramLegend.setTickLabelGap(5.5);
     }
     @FXML
     void SaveToFile(ActionEvent event) throws IOException
@@ -112,59 +149,10 @@ public class HelloController extends HelloApplication{
                 }
             }
         }
-        a4method();
+       // a4method();
         image1.setImage(wImage);
     }
-    public void a4method(){
-        extendedArray = new byte[(int)img.getHeight()+2][(int)img.getWidth()+2];
-        a4Array = new byte[(int)img.getHeight() + 2][(int)img.getWidth() + 2];
-        a4ArrayCopy = new byte[(int)img.getHeight() + 2][(int)img.getWidth() + 2];
-        a8Array = new byte[(int)img.getHeight() + 2][(int)img.getWidth() + 2];
-        for(int i = 0;i< (int)img.getHeight()+2;i++)
-        {
-            for(int j = 0;j < (int)img.getWidth()+2;j++){
-                /*a4Array[0][j] = 0;
-                a4Array[(int)img.getHeight() + 1][j] = 0;*/
-                extendedArray[0][j] = 0;
-                extendedArray[(int)img.getHeight() + 1][j] = 0;
-            }
-           /* a4Array[i][0] = 0;
-            a4Array[i][(int)img.getWidth() + 1] = 0;*/
-            extendedArray[i][0] = 0;
-            extendedArray[i][(int)img.getWidth() + 1] = 0;
-        }
-        for(int i = 1;i< (int)img.getHeight()+1;i++)
-        {
-            for(int j = 1;j < (int)img.getWidth()+1;j++){
-                // a4Array[i][j] = array[i-1][j-1];
-                extendedArray[i][j] = Byte.parseByte(tf[i-1][j-1].getText());
-            }
-        }
 
-        for(int i = 0;i< (int)img.getHeight()+2;i++)
-        {
-            for(int j = 0;j < (int)img.getWidth()+2;j++) {
-                a4ArrayCopy[i][j] = a4Array[i][j];
-            }
-        }
-        for(int i = 1;i< (int)img.getHeight()+1;i++)
-        {
-            for(int j = 1;j < (int)img.getWidth()+1;j++) {
-                  a8Array[i][j] = (byte) (a4Array[i + 1][j] + a4Array[i][j+1] + a4Array[i][j-1] + a4Array[i-1][j]
-                          + a4Array[i-1][j-1] + a4Array[i-1][j+1] + a4Array[i+1][j-1] + a4Array[i+1][j+1]);
-            }
-        }
-
-
-        for(int i = 1;i< (int)img.getHeight()+1;i++)
-        {
-            for(int j = 1;j < (int)img.getWidth()+1;j++) {
-                a4ArrayCopy[i][j] = (byte) (a4Array[i + 1][j] + a4Array[i][j+1] + a4Array[i][j-1] + a4Array[i-1][j]);
-            }
-        }
-
-
-    }
     @FXML
     void resultBut(ActionEvent event) {
         createTable(a4Array,(int)(img.getWidth()),(int)(img.getHeight()),gp_SecondTab);
@@ -177,30 +165,10 @@ public class HelloController extends HelloApplication{
 
     @FXML
     void savingfileBmpbtn(ActionEvent event) {
-            fileChooser = new FileChooser();
-        File selectedFile = fileChooser.showSaveDialog(null);
 
-       // savingBMP();
-        try{
-            BufferedImage imgf = new BufferedImage((int)img.getWidth(), (int)img.getHeight(), BufferedImage.TYPE_INT_RGB );
 
-            File f = new File( selectedFile.getAbsolutePath());
 
-            for(int x = 0; x < (int)img.getWidth(); x++){
-                for(int y = 0; y < (int)img.getHeight(); y++){
-                    if(Integer.parseInt(tf[x][y].getText()) == 0) {
-                        imgf.setRGB(x, y, 16777215);
-                    }
-                    else{
-                        imgf.setRGB(x, y, 0);
-                    }
-                }
-            }
-            ImageIO.write(imgf, "BMP", f);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+
     }
     @FXML
     void loadingButton(ActionEvent event) {
@@ -213,7 +181,126 @@ public class HelloController extends HelloApplication{
     }
     @FXML
     void ThirdWaveButtonActon(ActionEvent event) {
-        //ThirdWave.FirstIterationWave(extendedArray,(int)img.getWidth(),(int)img.getHeight());
+        extendedArrayForWaves(Integer.parseInt(countOFwaves.getText()));
+        tw = new ThirdWave();
+        double[] radiusArr = new double[Integer.parseInt(countOFwaves.getText())];
+        for (int i = 0; i < Integer.parseInt(countOFwaves.getText()); i++) {
+            radiusArr[i] = Double.parseDouble(tfWaves[i].getText());
+        }
+        //resultOfWaves = new double[(int)img.getWidth()][(int)img.getHeight()];
+        resultOfWaves = tw.CalculateWaves(extendedArray, (int) img.getWidth(), (int) img.getHeight(), Integer.parseInt(countOFwaves.getText()), radiusArr);
+        HashMap<Double, Integer> hs = tw.getGistogram();
+        SortByValue sv = new SortByValue(hs);
+        System.out.println("Sorting values in ascending order:");
+
+
+        Iterator iterator = sv.sortByValue(true).entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            createHistogram((double) entry.getKey(), (int) entry.getValue());
+        }
+        gistogramLegend.setAnimated(false);
+        writeToImageWave(sv.sortByValue(true),resultOfWaves,(int)img.getHeight(),(int)img.getWidth());
+    }
+    public void extendedArrayForWaves(int countOfWave){
+        extendedArray = new byte[(int)(img.getHeight() + (countOfWave * 2))][(int)(img.getWidth() + (countOfWave*2))];
+        for(int i = 0; i < img.getHeight() +(countOfWave * 2);i++){
+            for(int j = 0; j < img.getWidth() + (countOfWave * 2);j++) {
+                extendedArray[i][j] = 0;
+            }
+        }
+        for(int i = countOfWave; i < img.getHeight() + countOfWave;i++){
+            for(int j = countOfWave; j < img.getWidth() + countOfWave;j++){
+                extendedArray[i][j] = Byte.parseByte(tf[j-countOfWave][i-countOfWave].getText());
+            }
+        }
+        for(int i = 0;i < img.getHeight() +(countOfWave * 2);i++){
+            for(int j = 0; j < img.getWidth() + (countOfWave * 2); j++ ){
+                System.out.print(extendedArray[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+    public void createHistogram(double key, int value){
+
+        XYChart.Series ds = new XYChart.Series();
+        ds.getData().add(new XYChart.Data(key+"",value));
+        barGistogram.getData().add(ds);
+    }
+    public void writeToImageWave(Map hs,double[][] result,int height,int width){
+        Iterator iterator = hs.entrySet().iterator();
+        int countOfCol = hs.size() - 1;
+        int countOfStep = 255/countOfCol;
+        int lastColor = 255;
+        colorArray = new int[(int)img.getWidth()][(int)img.getWidth()];
+        int count = 0;
+        Map.Entry entry = (Map.Entry) iterator.next();
+        while (iterator.hasNext()) {
+            entry = (Map.Entry) iterator.next();
+            lastColor-=countOfStep;
+            entry.setValue(lastColor);
+            for(int i = 0; i < width;i++){
+                for(int j = 0; j < height;j++){
+                    if( result[i][j] == (double)entry.getKey()){
+                        colorArray[i][j] = (int)entry.getValue();
+                        count++;
+                    }
+                }
+            }
+        }
+        System.out.println(count);
+        double [][]waveImage = new double[(int)img.getHeight()][(int)img.getWidth()];
+
+
+        WritableImage wwImage = new WritableImage((int)img.getWidth(),(int) img.getHeight());
+
+        PixelWriter writer = wwImage.getPixelWriter();
+
+        for(int y = 0; y <(int) img.getHeight(); y++) {
+            for(int x = 0; x <(int) img.getWidth(); x++) {
+                if(colorArray[x][y] == 0)
+                {
+                    colorArray[x][y] = 255;
+                }
+                System.out.print((int)colorArray[x][y] + "  ");
+                writer.setColor(y, x,Color.rgb(colorArray[x][y],colorArray[x][y],colorArray[x][y]));
+
+            }
+            System.out.println();
+
+        }
+
+        imgviewForWaves.setImage(wwImage);
+    }
+    @FXML
+    void saveImageAfterThirdWaves(ActionEvent event) {
+        saveAnyImageInFile(colorArray);
+    }
+
+    public void saveAnyImageInFile(int[][]colorArray ){
+        fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showSaveDialog(null);
+
+        // savingBMP();
+        try{
+            BufferedImage imgf = new BufferedImage((int)img.getWidth(), (int)img.getHeight(), BufferedImage.TYPE_INT_RGB );
+
+            File f = new File( selectedFile.getAbsolutePath());
+
+            for(int x = 0; x < (int)img.getWidth(); x++){
+                for(int y = 0; y < (int)img.getHeight(); y++){
+                    int r = colorArray[x][y];
+                    int g = colorArray[x][y];
+                    int b = colorArray[x][y];
+                    int col = (r << 16) | (g << 8) | b;
+                        imgf.setRGB(y, x, col);
+                }
+            }
+            ImageIO.write(imgf, "BMP", f);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
 

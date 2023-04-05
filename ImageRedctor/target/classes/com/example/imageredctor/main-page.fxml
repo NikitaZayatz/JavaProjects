@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.GridPane?>
@@ -16,7 +17,7 @@
 
 <TabPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.imageredctor.HelloController">
    <tabs>
-      <Tab text="lab1">
+      <Tab closable="false" text="lab1">
          <content>
             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1400.0">
                <children>
@@ -96,27 +97,37 @@
             </AnchorPane>
          </content>
       </Tab>
-      <Tab text="Lab2">
+      <Tab closable="false" text="Lab2">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <BarChart fx:id="barGistogram" layoutX="722.0" layoutY="688.0" prefHeight="298.0" prefWidth="618.0">
+                  <BarChart fx:id="barGistogram" categoryGap="20.0" layoutX="1.0" layoutY="177.0" legendSide="TOP" legendVisible="false" prefHeight="581.0" prefWidth="1320.0">
                     <xAxis>
-                      <CategoryAxis side="BOTTOM" />
+                      <CategoryAxis fx:id="gistogramLegend" prefHeight="41.0" prefWidth="298.0" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                      <NumberAxis side="LEFT" />
+                      <NumberAxis minorTickCount="1" side="LEFT" />
                     </yAxis>
                   </BarChart>
-                  <ImageView fx:id="iv_loadingImage1" fitHeight="445.0" fitWidth="445.0" layoutX="-1.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" />
-                  <Button fx:id="ThirdWaveButton" layoutX="771.0" layoutY="86.0" mnemonicParsing="false" onAction="#ThirdWaveButtonActon" prefHeight="117.0" prefWidth="364.0" text="ВЫЗВАТЬ" textFill="#062fff">
+                  <ImageView fx:id="iv_loadingImage1" fitHeight="136.0" fitWidth="147.0" layoutX="273.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
+                  <Button fx:id="ThirdWaveButton" layoutX="728.0" layoutY="23.0" mnemonicParsing="false" onAction="#ThirdWaveButtonActon" prefHeight="117.0" prefWidth="364.0" text="ВЫЗВАТЬ" textFill="#062fff">
                      <font>
                         <Font size="59.0" />
                      </font>
                   </Button>
-                  <Canvas fx:id="canvasDraw" height="552.0" layoutX="10.0" layoutY="340.0" width="700.0" />
+                  <TextField fx:id="countOFwaves" layoutX="21.0" layoutY="61.0" onKeyReleased="#cteateTFforRadius" />
+                  <Label layoutX="21.0" layoutY="34.0" text="Enter count of waves" />
+                  <GridPane fx:id="gpWavesradius" layoutX="14.0" layoutY="122.0">
+                  </GridPane>
+                  <ImageView fx:id="imgviewForWaves" fitHeight="135.0" fitWidth="144.0" layoutX="442.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" />
+                  <Button layoutX="1329.0" layoutY="869.0" mnemonicParsing="false" onAction="#saveImageAfterThirdWaves" prefHeight="0.0" prefWidth="57.0" text="Save" />
                </children>
             </AnchorPane>
+        </content>
+      </Tab>
+      <Tab text="40%">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
         </content>
       </Tab>
    </tabs>
