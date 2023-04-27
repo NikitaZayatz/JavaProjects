@@ -44,11 +44,15 @@ public class HelloController extends HelloApplication{
     @FXML
     private ImageView iv_loadingImage1;
     public byte [][]array;
+    @FXML
+    private GridPane thirdWavetable;
     ThirdWave tw;
     public byte a4Array[][];
     public byte a4ArrayCopy[][];
     public byte a8Array[][];
     public byte extendedArray[][];
+    @FXML
+    private TextField tf_fortyPercent;
     @FXML
     private CategoryAxis gistogramLegend;
     @FXML
@@ -57,11 +61,47 @@ public class HelloController extends HelloApplication{
     @FXML
     private GridPane gpWavesradius;
     Image img;
+
+    @FXML
+    private TextField tf_UpperBotder;
     int[][]colorArray;
     double[][] resultOfWaves;
     final CategoryAxis xAxis = new CategoryAxis();
     final NumberAxis yAxis = new NumberAxis();
+    Map sortedMap;
+    byte[][] fortyResult;
+    @FXML
+    private ImageView fortyPrecentImageWiev;
 
+
+    @FXML
+    void fortyPercentEvent(ActionEvent event) {
+        FortyPercent fortyPercent = new FortyPercent();
+        fortyResult = fortyPercent.calculateFortyPercent((int)img.getWidth(),(int)img.getHeight(),sortedMap,resultOfWaves,Double.parseDouble(tf_fortyPercent.getText()));
+        fortyPrecentImage(fortyResult);
+
+    }
+
+
+
+    public void fortyPrecentImage(byte[][] array) {
+
+        WritableImage wImage = new WritableImage((int)img.getWidth(),(int) img.getHeight());
+
+        PixelWriter writer = wImage.getPixelWriter();
+
+        for(int y = 0; y <(int) img.getHeight(); y++) {
+            for(int x = 0; x <(int) img.getWidth(); x++) {
+                if( array[x][y] == 1){
+                    writer.setColor(y, x, Color.BLACK);
+                }else {
+                    writer.setColor(y, x, Color.WHITE);
+                }
+            }
+        }
+        // a4method();
+        fortyPrecentImageWiev.setImage(wImage);
+    }
 
     @FXML
     void cteateTFforRadius(KeyEvent event) {
@@ -193,7 +233,7 @@ public class HelloController extends HelloApplication{
         SortByValue sv = new SortByValue(hs);
         System.out.println("Sorting values in ascending order:");
 
-
+        sortedMap = sv.sortByValue(false);
         Iterator iterator = sv.sortByValue(true).entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry) iterator.next();
@@ -227,6 +267,45 @@ public class HelloController extends HelloApplication{
         ds.getData().add(new XYChart.Data(key+"",value));
         barGistogram.getData().add(ds);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void writeToImageWave(Map hs,double[][] result,int height,int width){
         Iterator iterator = hs.entrySet().iterator();
         int countOfCol = hs.size() - 1;
@@ -252,6 +331,16 @@ public class HelloController extends HelloApplication{
         double [][]waveImage = new double[(int)img.getHeight()][(int)img.getWidth()];
 
 
+
+
+
+        thirdWavetable.setGridLinesVisible(true);
+        thirdWavetable.setPrefHeight(10000);
+        thirdWavetable.setPrefWidth(15000);
+        TextField[][] textFields;
+        textFields = new TextField[(int)img.getWidth()][(int)img.getHeight()];
+
+
         WritableImage wwImage = new WritableImage((int)img.getWidth(),(int) img.getHeight());
 
         PixelWriter writer = wwImage.getPixelWriter();
@@ -262,7 +351,17 @@ public class HelloController extends HelloApplication{
                 {
                     colorArray[x][y] = 255;
                 }
-                System.out.print((int)colorArray[x][y] + "  ");
+
+
+                textFields[y][x] = new TextField();
+                textFields[y][x].setText((int)colorArray[y][x]+"");
+                textFields[y][x].setPrefHeight(20);
+                textFields[y][x].setPrefWidth(50);
+                textFields[y][x].setAlignment(Pos.CENTER);
+                textFields[y][x].setEditable(true);
+                thirdWavetable.setRowIndex(textFields[y][x], x);
+                thirdWavetable.setColumnIndex(textFields[y][x], y);
+                thirdWavetable.getChildren().add(textFields[y][x]);
                 writer.setColor(y, x,Color.rgb(colorArray[x][y],colorArray[x][y],colorArray[x][y]));
 
             }

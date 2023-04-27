@@ -29,6 +29,8 @@ public class ThirdWave {
          System.out.println(sortValues(result,width,height));
         return result;
     }
+
+
     public void iterations(int countOFIterations,int countOfLastIteration,int width,int height,byte[][]array_wave,double[] arRadius,double result[][])
     {
         int count;
